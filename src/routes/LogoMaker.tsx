@@ -145,14 +145,6 @@ function BeybladeLogo({
           fill={sweepColor}
           opacity="0.85"
         />
-        <path
-          d="M435.61,360.54c-8.87,15.31-19.81,29.56-32.65,42.41-38.72,38.72-90.2,60.04-144.96,60.04s-106.24-21.32-144.96-60.04c-12.85-12.85-23.78-27.1-32.65-42.41"
-          fill="none"
-          stroke={textColor}
-          strokeWidth="10"
-          strokeMiterlimit="10"
-          opacity="0.4"
-        />
       </g>
 
       {/* Outer black ring (~270° arc) */}
