@@ -4,12 +4,18 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 import { LogoMaker } from "./routes/LogoMaker";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LogoMaker />,
-  },
-]);
+// Detect GitHub Pages subpath basename
+const basename = import.meta.env.BASE_URL;
+
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <LogoMaker />,
+    },
+  ],
+  { basename }
+);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
