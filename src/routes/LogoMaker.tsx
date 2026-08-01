@@ -301,6 +301,8 @@ export function LogoMaker() {
   );
 
   const [autoDetecting, setAutoDetecting] = useState(false);
+  const [printSize, setPrintSize] = useState("UX");
+  const [showPrintHelp, setShowPrintHelp] = useState(false);
 
   const applyAutoTheme = useCallback(async (imageSrc: string) => {
     setAutoDetecting(true);
@@ -379,10 +381,64 @@ export function LogoMaker() {
     img.src = url;
   }, []);
 
+  const handleSvgDownload = useCallback(() => {
+    const svg = document.querySelector("svg[viewBox='0 0 516 516']");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const link = document.createElement("a");
+    link.download = "beyblade-x-logo.svg";
+    link.href = URL.createObjectURL(blob);
+    link.click();
+  }, []);
+
+  const handlePrintDownload = useCallback((type: string) => {
+    const sizeMap: Record<string, number> = { BX: 16, UX: 17, CX: 16 };
+    const sizeMm = sizeMap[type] || 17;
+    const svg = document.querySelector("svg[viewBox='0 0 516 516']");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    // sizeMm + 2mm bleed, at 300 DPI
+    const totalMm = sizeMm + 2;
+    const px = Math.round((totalMm / 25.4) * 300);
+    const canvas = document.createElement("canvas");
+    canvas.width = px;
+    canvas.height = px;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, px, px);
+    const img = new Image();
+    const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, px, px);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const link = document.createElement("a");
+        link.download = `beyblade-x-logo-print-${sizeMm}mm-300dpi.png`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+      }, "image/png");
+    };
+    img.src = url;
+  }, []);
+
   return (
     <div className="mx-auto max-w-md min-h-dvh flex flex-col">
       <header className="px-5 py-4 border-b border-neutral-800 flex items-center justify-between">
-        <h1 className="text-lg font-bold tracking-tight">⚡ Beyblade X Logo Maker</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-bold tracking-tight">⚡ BBX Chip Maker</h1>
+          <a
+            href="https://buymeacoffee.com/dirathea"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-medium text-amber-500 hover:text-amber-400 transition-colors"
+          >
+            ☕ Buy me a coffee
+          </a>
+        </div>
         <button onClick={() => setConfig(DEFAULT_CONFIG)} className="text-xs text-neutral-500 hover:text-neutral-300">
           Reset
         </button>
@@ -550,13 +606,68 @@ export function LogoMaker() {
           )}
         </div>
 
-        {/* Download */}
-        <button
-          onClick={handleDownload}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-500 py-4 text-sm font-bold text-white transition-all"
-        >
-          <Download size={20} /> Download PNG (1024×1024)
-        </button>
+        {/* Downloads */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <select
+              value={printSize}
+              onChange={(e) => setPrintSize(e.target.value)}
+              className="flex-1 rounded-xl bg-neutral-900 border border-neutral-800 px-3 py-2.5 text-xs text-neutral-400"
+            >
+              <option value="BX">BX (Basic)</option>
+              <option value="UX">UX (Ultimate)</option>
+              <option value="CX">CX (Custom)</option>
+            </select>
+            <button
+              onClick={() => setShowPrintHelp(true)}
+              className="rounded-xl bg-neutral-900 border border-neutral-800 px-3 py-2.5 text-xs text-neutral-500 hover:text-neutral-300"
+            >
+              ?
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={handleDownload}
+              className="flex items-center justify-center gap-1.5 rounded-xl bg-red-600 hover:bg-red-500 py-3 text-xs font-bold text-white transition-all"
+            >
+              <Download size={16} /> PNG
+            </button>
+            <button
+              onClick={() => handlePrintDownload(printSize)}
+              className="flex items-center justify-center gap-1.5 rounded-xl bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 py-3 text-xs font-medium text-neutral-300 transition-all"
+            >
+              <Download size={16} /> Print
+            </button>
+            <button
+              onClick={handleSvgDownload}
+              className="flex items-center justify-center gap-1.5 rounded-xl bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 py-3 text-xs font-medium text-neutral-300 transition-all"
+            >
+              <Download size={16} /> SVG
+            </button>
+          </div>
+        </div>
+
+        {/* Print Help Modal */}
+        {showPrintHelp && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowPrintHelp(false)}>
+            <div className="mx-4 max-w-sm rounded-2xl bg-neutral-900 border border-neutral-800 p-5" onClick={(e) => e.stopPropagation()}>
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-neutral-200">Print Sizes</h3>
+                <button onClick={() => setShowPrintHelp(false)} className="text-neutral-500 hover:text-neutral-300">
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="space-y-2 text-xs text-neutral-400">
+                <div className="flex justify-between"><span className="font-medium text-neutral-300">BX (Basic)</span><span>16mm diameter (0.63")</span></div>
+                <div className="flex justify-between"><span className="font-medium text-neutral-300">UX (Ultimate)</span><span>17mm diameter (0.67")</span></div>
+                <div className="flex justify-between"><span className="font-medium text-neutral-300">CX (Custom)</span><span>16mm diameter (0.63")</span></div>
+              </div>
+              <p className="mt-4 text-xs text-neutral-500">
+                Print Ready PNG includes 2mm bleed at 300 DPI with white background. For professional printing, use SVG Vector format.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
