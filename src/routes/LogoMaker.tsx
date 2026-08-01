@@ -159,10 +159,20 @@ function BeybladeLogo({
         fill={ringAccentColor}
       />
 
-      {/* Inner thin outline */}
+      {/* Inner thin outline (disc → text ring border) */}
       <path
         d="M258,69.5v19c-3.12,0-6.18.08-9.1.25-89.95,4.76-160.4,79.1-160.4,169.25,0,27.03,6.17,52.85,18.33,76.73,1.38,2.72,2.84,5.42,4.34,8.01v.03s-16.44,9.49-16.44,9.49c-16.51-28.52-25.23-61.12-25.23-94.26,0-103.94,84.56-188.5,188.5-188.5Z"
         fill="#181716"
+      />
+
+      {/* Outer thin outline (accent ring inner edge — text ring outer border)
+          Follows the accent arc from 12 o'clock to ~8 o'clock */}
+      <path
+        d="M258,58.5c-104.59,0-189.5,84.91-189.5,189.5,0,34.51,9.23,67.68,26.69,96.62"
+        fill="none"
+        stroke="#181716"
+        strokeWidth="5"
+        strokeMiterlimit="10"
       />
 
       {/* Speed/motion lines
