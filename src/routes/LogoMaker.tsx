@@ -21,6 +21,7 @@ interface LogoConfig {
   textColor: string;
   bgColor: string;
   spinDirection: SpinDirection;
+  logoRotation: number;
   centerImage: string | null;
   imageScale: number;
   imageX: number;
@@ -45,6 +46,7 @@ const DEFAULT_CONFIG: LogoConfig = {
   textColor: "#ffffff",
   bgColor: "#0a0a0a",
   spinDirection: "right",
+  logoRotation: 0,
   centerImage: null,
   imageScale: 1,
   imageX: 0,
@@ -68,7 +70,7 @@ function BeybladeLogo({
 }) {
   const {
     discColor, ringAccentColor, sweepColor, textColor, bgColor,
-    spinDirection, centerImage, imageScale, imageX, imageY,
+    spinDirection, logoRotation, centerImage, imageScale, imageX, imageY,
   } = config;
   const flip = spinDirection === "left";
 
@@ -126,6 +128,8 @@ function BeybladeLogo({
       className="h-full w-full touch-none select-none"
       xmlns="http://www.w3.org/2000/svg"
     >
+      {/* === ROTATABLE LOGO FRAME === */}
+      <g transform={`rotate(${logoRotation} ${CENTER} ${CENTER})`}>
       <defs>
         {/* Clip everything to the outer circle */}
         <clipPath id="logoClip">
@@ -246,7 +250,9 @@ function BeybladeLogo({
       {/* X letter — black fill with white outline */}
       <path d="M32.87,331.53l11.41-16.62-18.18-8.83-3.39-12.76,25.69,13.73,14.96-23.69,3.39,12.76-10.81,15.68,17.15,8.17,3.43,12.9-24.79-13.27-15.44,24.83-3.43-12.9Z" fill="#181716" stroke={sweepColor} strokeWidth="4" strokeLinejoin="round" strokeLinecap="round" transform="matrix(1.025,0,0,1.025,-6.45,-6.45)" />
 
-      {/* === IMAGE ON TOP OF EVERYTHING (no clip, draggable) === */}
+      </g>
+
+      {/* === IMAGE ON TOP OF EVERYTHING (no clip, draggable, not rotated) === */}
       {centerImage && (
         <image
           href={centerImage}
@@ -414,6 +420,25 @@ export function LogoMaker() {
               <RotateCcw size={18} /> Left Spin
             </button>
           </div>
+        </div>
+
+        {/* Logo Rotation */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-neutral-300 flex items-center gap-2">
+              <RotateCw size={16} /> Logo Rotation
+            </span>
+            <span className="font-mono text-xs text-neutral-500">{config.logoRotation}°</span>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="360"
+            step="1"
+            value={config.logoRotation}
+            onChange={(e) => update("logoRotation", parseInt(e.target.value))}
+            className="w-full accent-red-500"
+          />
         </div>
 
         {/* Center Image */}
