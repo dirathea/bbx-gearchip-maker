@@ -163,21 +163,6 @@ function BeybladeLogo({
         fill={ringAccentColor}
       />
 
-      {/* === IMAGE (inside rotation, under speed lines) === */}
-      {centerImage && (
-        <image
-          href={centerImage}
-          x={imgX}
-          y={imgY}
-          width={imgSize}
-          height={imgSize}
-          preserveAspectRatio="xMidYMid meet"
-          style={{ cursor: dragRef.current ? "grabbing" : "grab" }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-        />
-      )}
 
       {/* === SPIN-SPECIFIC ELEMENTS (fully decoupled) === */}
       {flip ? (
@@ -191,19 +176,6 @@ function BeybladeLogo({
             strokeWidth="8"
             strokeLinecap="butt"
           />
-
-          {/* Speed/motion lines — left spin position */}
-          <g transform="matrix(0.5, 0.866, 0.866, -0.5, -94.43, 163.57)">
-            <g fill="none" stroke={sweepColor} strokeWidth="33" strokeMiterlimit="10">
-              <path d="M335.95,50.22c.62.23,1.25.47,1.87.71" />
-              <path d="M345.23,53.94c7.38,3.16,14.56,6.71,21.51,10.62" strokeDasharray="4 6 10 8" />
-              <path d="M370.21,66.56c44.9,26.37,79.7,68.09,97.19,117.95" strokeDasharray="4 8 4 6 10 8" />
-              <path d="M468.69,188.31c.21.63.42,1.27.62,1.9" />
-            </g>
-            <polygon points="479.18,276 494.18,246 464.18,246" fill={sweepColor} />
-            <polygon points="473.5,312.78 492.73,285.31 463.06,280.9" fill={sweepColor} />
-            <polygon points="476.99,237.66 486.85,205.6 457.26,210.54" fill={sweepColor} />
-          </g>
 
           {/* Connecting arc: 12oc → 4oc (moved from bottom to right side) */}
           <path
@@ -226,19 +198,6 @@ function BeybladeLogo({
             strokeWidth="8"
             strokeLinecap="butt"
           />
-
-          {/* Speed/motion lines — right spin position */}
-          <g>
-            <g fill="none" stroke={sweepColor} strokeWidth="33" strokeMiterlimit="10">
-              <path d="M335.95,50.22c.62.23,1.25.47,1.87.71" />
-              <path d="M345.23,53.94c7.38,3.16,14.56,6.71,21.51,10.62" strokeDasharray="4 6 10 8" />
-              <path d="M370.21,66.56c44.9,26.37,79.7,68.09,97.19,117.95" strokeDasharray="4 8 4 6 10 8" />
-              <path d="M468.69,188.31c.21.63.42,1.27.62,1.9" />
-            </g>
-            <polygon points="479.18,276 494.18,246 464.18,246" fill={sweepColor} />
-            <polygon points="473.5,312.78 492.73,285.31 463.06,280.9" fill={sweepColor} />
-            <polygon points="476.99,237.66 486.85,205.6 457.26,210.54" fill={sweepColor} />
-          </g>
 
           {/* Connecting arc: 8oc → 4oc along bottom */}
           <path
@@ -268,6 +227,51 @@ function BeybladeLogo({
 
       </g>
 
+
+      {/* === IMAGE (NOT rotated) === */}
+      {centerImage && (
+        <image
+          href={centerImage}
+          x={imgX}
+          y={imgY}
+          width={imgSize}
+          height={imgSize}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ cursor: dragRef.current ? "grabbing" : "grab" }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+        />
+      )}
+
+      {/* === SPEED ARROWS (on top of image, rotated with logo) === */}
+      <g transform={`rotate(${logoRotation} ${CENTER} ${CENTER})`}>
+        {flip ? (
+          <g transform="matrix(0.5, 0.866, 0.866, -0.5, -94.43, 163.57)">
+            <g fill="none" stroke={sweepColor} strokeWidth="33" strokeMiterlimit="10">
+              <path d="M335.95,50.22c.62.23,1.25.47,1.87.71" />
+              <path d="M345.23,53.94c7.38,3.16,14.56,6.71,21.51,10.62" strokeDasharray="4 6 10 8" />
+              <path d="M370.21,66.56c44.9,26.37,79.7,68.09,97.19,117.95" strokeDasharray="4 8 4 6 10 8" />
+              <path d="M468.69,188.31c.21.63.42,1.27.62,1.9" />
+            </g>
+            <polygon points="479.18,276 494.18,246 464.18,246" fill={sweepColor} />
+            <polygon points="473.5,312.78 492.73,285.31 463.06,280.9" fill={sweepColor} />
+            <polygon points="476.99,237.66 486.85,205.6 457.26,210.54" fill={sweepColor} />
+          </g>
+        ) : (
+          <g>
+            <g fill="none" stroke={sweepColor} strokeWidth="33" strokeMiterlimit="10">
+              <path d="M335.95,50.22c.62.23,1.25.47,1.87.71" />
+              <path d="M345.23,53.94c7.38,3.16,14.56,6.71,21.51,10.62" strokeDasharray="4 6 10 8" />
+              <path d="M370.21,66.56c44.9,26.37,79.7,68.09,97.19,117.95" strokeDasharray="4 8 4 6 10 8" />
+              <path d="M468.69,188.31c.21.63.42,1.27.62,1.9" />
+            </g>
+            <polygon points="479.18,276 494.18,246 464.18,246" fill={sweepColor} />
+            <polygon points="473.5,312.78 492.73,285.31 463.06,280.9" fill={sweepColor} />
+            <polygon points="476.99,237.66 486.85,205.6 457.26,210.54" fill={sweepColor} />
+          </g>
+        )}
+      </g>
 
 
     </svg>
