@@ -165,16 +165,6 @@ function BeybladeLogo({
         fill="#181716"
       />
 
-      {/* Outer thin outline (accent ring inner edge — text ring outer border)
-          Follows the accent arc from 12 o'clock to ~8 o'clock */}
-      <path
-        d="M258,58.5c-104.59,0-189.5,84.91-189.5,189.5,0,34.51,9.23,67.68,26.69,96.62"
-        fill="none"
-        stroke="#181716"
-        strokeWidth="5"
-        strokeMiterlimit="10"
-      />
-
       {/* Speed/motion lines
           Right spin: arrows start ~1 o'clock, sweep clockwise
           Left spin: reflect across 120° axis → start at 7 o'clock, sweep to ~4 o'clock
