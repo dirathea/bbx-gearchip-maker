@@ -163,6 +163,22 @@ function BeybladeLogo({
         fill={ringAccentColor}
       />
 
+      {/* === IMAGE (inside rotation, under speed lines) === */}
+      {centerImage && (
+        <image
+          href={centerImage}
+          x={imgX}
+          y={imgY}
+          width={imgSize}
+          height={imgSize}
+          preserveAspectRatio="xMidYMid meet"
+          style={{ cursor: dragRef.current ? "grabbing" : "grab" }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+        />
+      )}
+
       {/* === SPIN-SPECIFIC ELEMENTS (fully decoupled) === */}
       {flip ? (
         // ── LEFT SPIN ──
@@ -252,21 +268,8 @@ function BeybladeLogo({
 
       </g>
 
-      {/* === IMAGE ON TOP OF EVERYTHING (no clip, draggable, not rotated) === */}
-      {centerImage && (
-        <image
-          href={centerImage}
-          x={imgX}
-          y={imgY}
-          width={imgSize}
-          height={imgSize}
-          preserveAspectRatio="xMidYMid meet"
-          style={{ cursor: dragRef.current ? "grabbing" : "grab" }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-        />
-      )}
+
+
     </svg>
   );
 }
