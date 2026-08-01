@@ -165,11 +165,11 @@ function BeybladeLogo({
         fill={sweepColor}
       />
 
-      {/* Outer text band stroke — outer at 12:00, inner tilted to 11.9 */}
-      <path d="M252.1,-0.8 L263.9,0.8 L254.1,70.6 L242.2,68.9 Z" fill={sweepColor} />
+      {/* Outer text band stroke — outer at 12:00, inner tilted to 11.95 */}
+      <path d="M252.0,-0.4 L264.0,0.4 L259.1,70.0 L247.1,69.1 Z" fill={sweepColor} />
 
       {/* Outer text band stroke — outer at 8:00, inner tilted to 8.02 */}
-      <path d="M37.7,392.1 L31.4,381.9 L90.6,345.4 L96.9,355.6 Z" fill={sweepColor} />
+      <path d="M37.9,392.0 L31.2,382.0 L89.0,343.0 L95.7,352.9 Z" fill={sweepColor} />
 
       {/* Speed/motion lines
           Right spin: arrows start ~1 o'clock, sweep clockwise
