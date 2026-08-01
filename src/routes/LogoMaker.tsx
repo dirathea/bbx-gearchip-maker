@@ -162,14 +162,14 @@ function BeybladeLogo({
       {/* Inner thin outline (disc → text ring border) */}
       <path
         d="M258,69.5v19c-3.12,0-6.18.08-9.1.25-89.95,4.76-160.4,79.1-160.4,169.25,0,27.03,6.17,52.85,18.33,76.73,1.38,2.72,2.84,5.42,4.34,8.01v.03s-16.44,9.49-16.44,9.49c-16.51-28.52-25.23-61.12-25.23-94.26,0-103.94,84.56-188.5,188.5-188.5Z"
-        fill="#181716"
+        fill={sweepColor}
       />
 
       {/* Outer text band stroke — 12 o'clock vertical */}
-      <line x1="258" y1="0" x2="258" y2="72" stroke={sweepColor} strokeWidth="5" />
+      <line x1="258" y1="0" x2="258" y2="72" stroke={sweepColor} strokeWidth="19" />
 
       {/* Outer text band stroke — ~8 o'clock (end of X letter) */}
-      <line x1="34.6" y1="387" x2="96.9" y2="351" stroke={sweepColor} strokeWidth="5" />
+      <line x1="34.6" y1="387" x2="96.9" y2="351" stroke={sweepColor} strokeWidth="19" />
 
       {/* Speed/motion lines
           Right spin: arrows start ~1 o'clock, sweep clockwise
