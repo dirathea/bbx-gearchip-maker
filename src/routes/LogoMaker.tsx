@@ -195,11 +195,16 @@ function BeybladeLogo({
           <path d="M32.87,331.53l11.41-16.62-18.18-8.83-3.39-12.76,25.69,13.73,14.96-23.69,3.39,12.76-10.81,15.68,17.15,8.17,3.43,12.9-24.79-13.27-15.44,24.83-3.43-12.9Z" />
         </g>
 
-        {/* Connecting arc from text end to speed arrows */}
+        {/* Connecting arc from text end to speed arrows
+            Right spin: bottom arc (~8 o'clock → ~4 o'clock)
+            Left spin: top-right arc (12 o'clock → 4 o'clock) */}
         <path
-          d="M435.61,360.54c-8.87,15.31-19.81,29.56-32.65,42.41-38.72,38.72-90.2,60.04-144.96,60.04s-106.24-21.32-144.96-60.04c-12.85-12.85-23.78-27.1-32.65-42.41"
+          d={flip
+            ? "M258,0c75.11,0,140.38,41.89,174.31,103.86"
+            : "M435.61,360.54c-8.87,15.31-19.81,29.56-32.65,42.41-38.72,38.72-90.2,60.04-144.96,60.04s-106.24-21.32-144.96-60.04c-12.85-12.85-23.78-27.1-32.65-42.41"
+          }
           fill="none"
-          stroke="#ffffff"
+          stroke={sweepColor}
           strokeWidth="10"
           strokeMiterlimit="10"
           opacity="0.35"
