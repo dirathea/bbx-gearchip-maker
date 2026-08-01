@@ -135,6 +135,10 @@ function BeybladeLogo({
         <clipPath id="logoClip">
           <circle cx={CENTER} cy={CENTER} r={DISC_R} />
         </clipPath>
+        {/* Clip user image to full logo circle */}
+        <clipPath id="imageClip">
+          <circle cx={CENTER} cy={CENTER} r={VIEW / 2} />
+        </clipPath>
       </defs>
 
       {/* Background */}
@@ -228,7 +232,7 @@ function BeybladeLogo({
       </g>
 
 
-      {/* === IMAGE (NOT rotated) === */}
+      {/* === IMAGE (NOT rotated, clipped to outer circle) === */}
       {centerImage && (
         <image
           href={centerImage}
@@ -237,6 +241,7 @@ function BeybladeLogo({
           width={imgSize}
           height={imgSize}
           preserveAspectRatio="xMidYMid meet"
+          clipPath="url(#imageClip)"
           style={{ cursor: dragRef.current ? "grabbing" : "grab" }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
