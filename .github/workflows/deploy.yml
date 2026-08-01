@@ -25,7 +25,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Build
-        run: npx vite build --base=/bbx-gearchip-maker/
+        run: npx vite build
         env:
           NODE_ENV: production
       - uses: actions/upload-pages-artifact@v3
