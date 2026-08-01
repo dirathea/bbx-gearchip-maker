@@ -168,6 +168,9 @@ function BeybladeLogo({
       {/* Outer text band stroke — 12 o'clock vertical */}
       <line x1="258" y1="0" x2="258" y2="72" stroke={sweepColor} strokeWidth="5" />
 
+      {/* Outer text band stroke — ~8 o'clock (end of X letter) */}
+      <line x1="129" y1="34.6" x2="165" y2="96.9" stroke={sweepColor} strokeWidth="5" />
+
       {/* Speed/motion lines
           Right spin: arrows start ~1 o'clock, sweep clockwise
           Left spin: reflect across 120° axis → start at 7 o'clock, sweep to ~4 o'clock
