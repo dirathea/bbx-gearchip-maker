@@ -615,7 +615,7 @@ export function LogoMaker() {
               className="flex-1 rounded-xl bg-neutral-900 border border-neutral-800 px-3 py-2.5 text-xs text-neutral-400"
             >
               <option value="BX">BX (Basic)</option>
-              <option value="UX">UX (Ultimate)</option>
+              <option value="UX">UX (Unique)</option>
               <option value="CX">CX (Custom)</option>
             </select>
             <button
@@ -659,7 +659,7 @@ export function LogoMaker() {
               </div>
               <div className="space-y-2 text-xs text-neutral-400">
                 <div className="flex justify-between"><span className="font-medium text-neutral-300">BX (Basic)</span><span>16mm diameter (0.63")</span></div>
-                <div className="flex justify-between"><span className="font-medium text-neutral-300">UX (Ultimate)</span><span>17mm diameter (0.67")</span></div>
+                <div className="flex justify-between"><span className="font-medium text-neutral-300">UX (Unique)</span><span>17mm diameter (0.67")</span></div>
                 <div className="flex justify-between"><span className="font-medium text-neutral-300">CX (Custom)</span><span>16mm diameter (0.63")</span></div>
               </div>
               <p className="mt-4 text-xs text-neutral-500">
