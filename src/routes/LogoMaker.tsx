@@ -57,7 +57,7 @@ const CENTER = VIEW / 2; // 258
 const DISC_R = 186;
 
 /**
- * Beyblade X Gear Bit Logo — based on official SVG template.
+ * Beyblade X Gear Bit Logo - based on official SVG template.
  */
 function BeybladeLogo({
   config,
@@ -113,7 +113,7 @@ function BeybladeLogo({
     (e.target as Element).releasePointerCapture?.(e.pointerId);
   }, []);
 
-  // Image dimensions in SVG units — base size covers the disc, scale multiplies
+  // Image dimensions in SVG units - base size covers the disc, scale multiplies
   const baseSize = DISC_R * 2 * 0.75; // 75% of disc by default, user scales up
   const imgSize = baseSize * imageScale;
   const imgX = CENTER - imgSize / 2 + imageX;
@@ -136,7 +136,7 @@ function BeybladeLogo({
       {/* Background */}
       <rect width={VIEW} height={VIEW} rx={VIEW / 2} fill={bgColor} />
 
-      {/* === FRAME (ring, disc, sweep — always same position) === */}
+      {/* === FRAME (ring, disc, sweep - always same position) === */}
       {/* Disc fill + sweep (clipped) */}
       <g clipPath="url(#logoClip)">
         <circle cx={CENTER} cy={CENTER} r={DISC_R} fill={discColor} />
@@ -159,34 +159,81 @@ function BeybladeLogo({
         fill={ringAccentColor}
       />
 
-      {/* Unified text band border — one continuous stroke from 12oc to 8oc */}
-      <path
-        d="M258,0 L258,79c-3.12,0-6.18.08-9.1.25-89.95,4.76-160.4,79.1-160.4,169.25,0,27.03,6.17,52.85,18.33,76.73,1.38,2.72,2.84,5.42,4.34,8.01 L28.4,375.6"
-        fill="none"
-        stroke={sweepColor}
-        strokeWidth="12"
-        strokeLinecap="butt"
-      />
+      {/* === SPIN-SPECIFIC ELEMENTS (fully decoupled) === */}
+      {flip ? (
+        // ── LEFT SPIN ──
+        <>
+          {/* Left border stroke: same as right spin (12oc → curve left → 8oc) */}
+          <path
+            d="M258,0 L258,72c-102.72,0-186,83.28-186,186,0,33.88,9.06,65.65,24.9,93.01 L34.53,387.02"
+            fill="none"
+            stroke={sweepColor}
+            strokeWidth="8"
+            strokeLinecap="butt"
+          />
 
-      {/* Speed/motion lines
-          Right spin: arrows start ~1 o'clock, sweep clockwise
-          Left spin: reflect across 120° axis → start at 7 o'clock, sweep to ~4 o'clock
-          Rendered BEFORE text so text always shows on top */}
-      <g transform={flip ? "matrix(0.5, 0.866, 0.866, -0.5, -94.43, 163.57)" : undefined}>
-        <g fill="none" stroke={sweepColor} strokeWidth="33" strokeMiterlimit="10">
-          <path d="M335.95,50.22c.62.23,1.25.47,1.87.71" />
-          <path d="M345.23,53.94c7.38,3.16,14.56,6.71,21.51,10.62" strokeDasharray="4 6 10 8" />
-          <path d="M370.21,66.56c44.9,26.37,79.7,68.09,97.19,117.95" strokeDasharray="4 8 4 6 10 8" />
-          <path d="M468.69,188.31c.21.63.42,1.27.62,1.9" />
-        </g>
-        <polygon points="479.18,276 494.18,246 464.18,246" fill={sweepColor} />
-        <polygon points="473.5,312.78 492.73,285.31 463.06,280.9" fill={sweepColor} />
-        <polygon points="476.99,237.66 486.85,205.6 457.26,210.54" fill={sweepColor} />
-      </g>
+          {/* Speed/motion lines — left spin position */}
+          <g transform="matrix(0.5, 0.866, 0.866, -0.5, -94.43, 163.57)">
+            <g fill="none" stroke={sweepColor} strokeWidth="33" strokeMiterlimit="10">
+              <path d="M335.95,50.22c.62.23,1.25.47,1.87.71" />
+              <path d="M345.23,53.94c7.38,3.16,14.56,6.71,21.51,10.62" strokeDasharray="4 6 10 8" />
+              <path d="M370.21,66.56c44.9,26.37,79.7,68.09,97.19,117.95" strokeDasharray="4 8 4 6 10 8" />
+              <path d="M468.69,188.31c.21.63.42,1.27.62,1.9" />
+            </g>
+            <polygon points="479.18,276 494.18,246 464.18,246" fill={sweepColor} />
+            <polygon points="473.5,312.78 492.73,285.31 463.06,280.9" fill={sweepColor} />
+            <polygon points="476.99,237.66 486.85,205.6 457.26,210.54" fill={sweepColor} />
+          </g>
 
-      {/* === NON-FLIPPED ELEMENTS (lettering always readable) === */}
-      {/* Lettering around the curve — dark outline for pop */}
-      <g fill={textColor} stroke="#181716" strokeWidth="4" strokeLinejoin="round" strokeLinecap="round">
+          {/* Connecting arc: 12oc → 4oc (moved from bottom to right side) */}
+          <path
+            d="M258,53 A205,205 0 0 1 435.5,360.5"
+            fill="none"
+            stroke={sweepColor}
+            strokeWidth="10"
+            strokeMiterlimit="10"
+            opacity="1"
+          />
+        </>
+      ) : (
+        // ── RIGHT SPIN ──
+        <>
+          {/* Border stroke: 12oc → curve left → 8oc */}
+          <path
+            d="M258,0 L258,72c-102.72,0-186,83.28-186,186,0,33.88,9.06,65.65,24.9,93.01 L34.53,387.02"
+            fill="none"
+            stroke={sweepColor}
+            strokeWidth="8"
+            strokeLinecap="butt"
+          />
+
+          {/* Speed/motion lines — right spin position */}
+          <g>
+            <g fill="none" stroke={sweepColor} strokeWidth="33" strokeMiterlimit="10">
+              <path d="M335.95,50.22c.62.23,1.25.47,1.87.71" />
+              <path d="M345.23,53.94c7.38,3.16,14.56,6.71,21.51,10.62" strokeDasharray="4 6 10 8" />
+              <path d="M370.21,66.56c44.9,26.37,79.7,68.09,97.19,117.95" strokeDasharray="4 8 4 6 10 8" />
+              <path d="M468.69,188.31c.21.63.42,1.27.62,1.9" />
+            </g>
+            <polygon points="479.18,276 494.18,246 464.18,246" fill={sweepColor} />
+            <polygon points="473.5,312.78 492.73,285.31 463.06,280.9" fill={sweepColor} />
+            <polygon points="476.99,237.66 486.85,205.6 457.26,210.54" fill={sweepColor} />
+          </g>
+
+          {/* Connecting arc: 8oc → 4oc along bottom */}
+          <path
+            d="M435.61,360.54c-8.87,15.31-19.81,29.56-32.65,42.41-38.72,38.72-90.2,60.04-144.96,60.04s-106.24-21.32-144.96-60.04c-12.85-12.85-23.78-27.1-32.65-42.41"
+            fill="none"
+            stroke={sweepColor}
+            strokeWidth="10"
+            strokeMiterlimit="10"
+            opacity="1"
+          />
+        </>
+      )}
+
+      {/* === TEXT (shared, always readable) === */}
+      <g fill={textColor} transform="matrix(1.025,0,0,1.025,-6.45,-6.45)">
           <path d="M196.09,32.49l9.71,27.94-18.57,6.46c-6.91,2.4-11.09,1.84-13.37-4.72-.7-2-.09-4.12.95-5.33-2.91.51-6.04-1.72-7.14-4.87-2.04-5.86-.32-9.48,8.89-12.69l19.52-6.79ZM192.94,46.04l-1.78-5.11-12.52,4.35c-3.25,1.13-4.08,2.32-3.47,4.07s1.84,2.22,5.24,1.04l12.52-4.35ZM196.7,56.86l-1.67-4.81-11.51,4c-2.2.77-2.71,2.06-2.2,3.52.5,1.45,1.67,2.06,3.82,1.31l11.56-4.02Z" />
           <path d="M154.65,48.33l14.68,25.67-26.13,14.94-3.13-5.47,19.64-11.23-2.47-4.32-16.1,9.21-3.16-5.52,16.1-9.21-2.76-4.83-19.64,11.23-3.16-5.52,26.13-14.94Z" />
           <path d="M110.34,77.35l6.98,8.26,24.46,3.9-7.29,6.16-16.24-3.21.33,16.65-7.29,6.16.36-24.87-6.98-8.26,5.67-4.79Z" />
@@ -195,23 +242,9 @@ function BeybladeLogo({
           <path d="M44.67,177.23l-3.88-4.64,2.9-8.76,21.3,26.82-2.05,6.18-33.1,8.8,9.15-27.64,5.43,6.62-3.38,10.21,15.09-3.64-11.47-13.94Z" />
           <path d="M29.2,208.75l29.32,3.92-2.37,17.7c-1.54,11.51-5.92,19.9-17.37,18.37-11.45-1.53-13.48-10.78-11.94-22.29l2.37-17.7ZM33.14,227.29c-.73,5.46-1.03,12.54,6.69,13.57s9.29-5.87,10.02-11.33l1.38-10.35-16.71-2.23-1.38,10.35Z" />
           <path d="M24.33,254.16l29.54-1.27,1.29,30.07-6.3.27-.97-22.61-4.98.21.8,18.53-6.35.27-.8-18.53-5.56.24.97,22.61-6.35.27-1.29-30.07Z" />
-          <path d="M32.87,331.53l11.41-16.62-18.18-8.83-3.39-12.76,25.69,13.73,14.96-23.69,3.39,12.76-10.81,15.68,17.15,8.17,3.43,12.9-24.79-13.27-15.44,24.83-3.43-12.9Z" />
-        </g>
-
-        {/* Connecting arc from text end to speed arrows
-            Right spin: bottom arc (~8 o'clock → ~4 o'clock)
-            Left spin: top-right arc (12 o'clock → 4 o'clock) */}
-        <path
-          d={flip
-            ? "M258,0c75.11,0,140.38,41.89,174.31,103.86"
-            : "M435.61,360.54c-8.87,15.31-19.81,29.56-32.65,42.41-38.72,38.72-90.2,60.04-144.96,60.04s-106.24-21.32-144.96-60.04c-12.85-12.85-23.78-27.1-32.65-42.41"
-          }
-          fill="none"
-          stroke={sweepColor}
-          strokeWidth="10"
-          strokeMiterlimit="10"
-          opacity="0.8"
-        />
+      </g>
+      {/* X letter — black fill with white outline */}
+      <path d="M32.87,331.53l11.41-16.62-18.18-8.83-3.39-12.76,25.69,13.73,14.96-23.69,3.39,12.76-10.81,15.68,17.15,8.17,3.43,12.9-24.79-13.27-15.44,24.83-3.43-12.9Z" fill="#181716" stroke={sweepColor} strokeWidth="4" strokeLinejoin="round" strokeLinecap="round" transform="matrix(1.025,0,0,1.025,-6.45,-6.45)" />
 
       {/* === IMAGE ON TOP OF EVERYTHING (no clip, draggable) === */}
       {centerImage && (
@@ -405,7 +438,7 @@ export function LogoMaker() {
           </div>
         </div>
 
-        {/* Image Controls — only show when image is uploaded */}
+        {/* Image Controls - only show when image is uploaded */}
         {config.centerImage && (
           <div className="space-y-4 rounded-xl bg-neutral-900/50 p-4 border border-neutral-800">
             <div className="flex items-center gap-2 text-xs text-neutral-500">
