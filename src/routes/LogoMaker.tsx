@@ -207,7 +207,7 @@ function BeybladeLogo({
           stroke={sweepColor}
           strokeWidth="10"
           strokeMiterlimit="10"
-          opacity="0.35"
+          opacity="0.8"
         />
 
       {/* === IMAGE ON TOP OF EVERYTHING (no clip, draggable) === */}
