@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback } from "react";
+import { jsPDF } from "jspdf";
 import {
   RotateCw,
   RotateCcw,
@@ -8,6 +9,9 @@ import {
   ZoomIn,
   Move,
   Wand2,
+  FileText,
+  Plus,
+  Minus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getPalette } from "@/lib/palette";
@@ -315,6 +319,8 @@ export function LogoMaker() {
   const [autoDetecting, setAutoDetecting] = useState(false);
   const [printSize, setPrintSize] = useState("UX");
   const [showPrintHelp, setShowPrintHelp] = useState(false);
+  const [bulkCount, setBulkCount] = useState(8);
+  const [generatingBulk, setGeneratingBulk] = useState(false);
 
   const applyAutoTheme = useCallback(async (imageSrc: string) => {
     setAutoDetecting(true);
@@ -436,6 +442,111 @@ export function LogoMaker() {
     };
     img.src = url;
   }, []);
+
+  const handleBulkPdf = useCallback(async () => {
+    const svg = document.querySelector("svg[viewBox='0 0 516 516']");
+    if (!svg) return;
+    setGeneratingBulk(true);
+
+    try {
+      const svgData = new XMLSerializer().serializeToString(svg);
+      // Render SVG to high-res canvas
+      const renderPx = 2048;
+      const canvas = document.createElement("canvas");
+      canvas.width = renderPx;
+      canvas.height = renderPx;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, renderPx, renderPx);
+
+      const img = new Image();
+      const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, renderPx, renderPx);
+          URL.revokeObjectURL(url);
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = url;
+      });
+
+      const imgDataUrl = canvas.toDataURL("image/png");
+
+      // A4: 210 x 297 mm. Margins: 10mm each side.
+      const pageW = 210;
+      const pageH = 297;
+      const margin = 10;
+      const usableW = pageW - margin * 2;
+      const usableH = pageH - margin * 2;
+
+      // Chip size: based on UX (17mm) + 2mm bleed = 19mm, round to 20mm for spacing
+      const sizeMap: Record<string, number> = { BX: 16, UX: 17, CX: 16 };
+      const chipMm = (sizeMap[printSize] || 17) + 3; // chip + bleed + small gap
+      const gap = 2; // mm between chips
+      const cellSize = chipMm + gap;
+
+      const cols = Math.floor(usableW / cellSize);
+      const perPage = cols * Math.floor(usableH / cellSize);
+      const totalPages = Math.ceil(bulkCount / perPage);
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      let drawn = 0;
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) pdf.addPage();
+        // Optional: add subtle page header
+        pdf.setFontSize(8);
+        pdf.setTextColor(150);
+        pdf.text(
+          `BBX Chip Maker - ${printSize} (${sizeMap[printSize] || 17}mm) - Page ${page + 1}/${totalPages}`,
+          margin,
+          margin - 4
+        );
+
+        const startY = margin;
+        const chipsThisPage = Math.min(perPage, bulkCount - drawn);
+
+        for (let i = 0; i < chipsThisPage; i++) {
+          const idx = i;
+          const col = idx % cols;
+          const row = Math.floor(idx / cols);
+          const x = margin + col * cellSize;
+          const y = startY + row * cellSize;
+
+          // Draw cutting guide (thin gray circle)
+          pdf.setDrawColor(200);
+          pdf.setLineWidth(0.1);
+          pdf.circle(x + chipMm / 2, y + chipMm / 2, chipMm / 2);
+
+          // Draw the chip image
+          pdf.addImage(
+            imgDataUrl,
+            "PNG",
+            x,
+            y,
+            chipMm,
+            chipMm
+          );
+        }
+
+        drawn += chipsThisPage;
+      }
+
+      pdf.save(`bbx-chip-bulk-${bulkCount}x-${printSize}.pdf`);
+    } catch (e) {
+      console.error("Bulk PDF generation failed:", e);
+    } finally {
+      setGeneratingBulk(false);
+    }
+  }, [printSize, bulkCount]);
 
   return (
     <div className="mx-auto max-w-md min-h-dvh flex flex-col">
@@ -657,6 +768,54 @@ export function LogoMaker() {
               <Download size={16} /> SVG
             </button>
           </div>
+
+          {/* Bulk PDF */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center rounded-xl bg-neutral-900 border border-neutral-800">
+              <button
+                onClick={() => setBulkCount((c) => Math.max(1, c - 1))}
+                className="px-3 py-2.5 text-neutral-400 hover:text-white transition-colors"
+              >
+                <Minus size={14} />
+              </button>
+              <input
+                type="number"
+                min={1}
+                max={200}
+                value={bulkCount}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  if (Number.isFinite(v)) setBulkCount(Math.max(1, Math.min(200, v)));
+                }}
+                onBlur={(e) => {
+                  const v = Number(e.target.value);
+                  setBulkCount(v < 1 ? 1 : Math.min(200, Math.round(v)));
+                }}
+                className="w-[2.5rem] bg-transparent text-center text-xs font-medium text-neutral-200 tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              />
+              <button
+                onClick={() => setBulkCount((c) => Math.min(200, c + 1))}
+                className="px-3 py-2.5 text-neutral-400 hover:text-white transition-colors"
+              >
+                <Plus size={14} />
+              </button>
+            </div>
+            <button
+              onClick={handleBulkPdf}
+              disabled={generatingBulk}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-wait px-4 py-2.5 text-xs font-bold text-white transition-all"
+            >
+              {generatingBulk ? (
+                <>
+                  <span className="animate-spin">⏳</span> Generating...
+                </>
+              ) : (
+                <>
+                  <FileText size={16} /> Bulk PDF
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Print Help Modal */}
@@ -677,6 +836,20 @@ export function LogoMaker() {
               <p className="mt-4 text-xs text-neutral-500">
                 Print Ready PNG includes 2mm bleed at 300 DPI with white background. For professional printing, use SVG Vector format.
               </p>
+              <div className="mt-4 pt-4 border-t border-neutral-800">
+                <h4 className="mb-2 text-xs font-bold text-neutral-200">📄 Bulk PDF</h4>
+                <p className="text-xs text-neutral-500">
+                  Generates an A4 PDF with multiple chip copies in a grid with cutting guides.
+                </p>
+                <div className="mt-2 space-y-1 text-xs text-neutral-400">
+                  <div className="flex justify-between"><span className="font-medium text-neutral-300">BX (16mm)</span><span>max 117 / page</span></div>
+                  <div className="flex justify-between"><span className="font-medium text-neutral-300">UX (17mm)</span><span>max 96 / page</span></div>
+                  <div className="flex justify-between"><span className="font-medium text-neutral-300">CX (16mm)</span><span>max 117 / page</span></div>
+                </div>
+                <p className="mt-2 text-xs text-neutral-500">
+                  Multiple pages are auto-generated for larger quantities.
+                </p>
+              </div>
             </div>
           </div>
         )}
