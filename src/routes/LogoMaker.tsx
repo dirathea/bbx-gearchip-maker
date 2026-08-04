@@ -384,7 +384,7 @@ export function LogoMaker() {
 
 
   const handleDownload = useCallback(() => {
-    track("Download", { format: "PNG" });
+    track("Download", { format: "PNG", spin: config.spinDirection });
     const svg = document.querySelector("svg[viewBox='0 0 516 516']");
     if (!svg) return;
     const svgData = new XMLSerializer().serializeToString(svg);
@@ -411,7 +411,7 @@ export function LogoMaker() {
   }, []);
 
   const handleSvgDownload = useCallback(() => {
-    track("Download", { format: "SVG" });
+    track("Download", { format: "SVG", spin: config.spinDirection });
     const svg = document.querySelector("svg[viewBox='0 0 516 516']");
     if (!svg) return;
     const svgData = new XMLSerializer().serializeToString(svg);
@@ -423,7 +423,7 @@ export function LogoMaker() {
   }, []);
 
   const handlePrintDownload = useCallback((type: string) => {
-    track("Download", { format: "Print", chip_size: type });
+    track("Download", { format: "Print", chip_size: type, spin: config.spinDirection });
     const sizeMap: Record<string, number> = { BX: 16, UX: 17, CX: 16 };
     const sizeMm = sizeMap[type] || 17;
     const svg = document.querySelector("svg[viewBox='0 0 516 516']");
@@ -457,7 +457,7 @@ export function LogoMaker() {
   }, []);
 
   const handleBulkPdf = useCallback(async () => {
-    track("Download", { format: "Bulk PDF", chip_size: printSize, bulk_count: bulkCount });
+    track("Download", { format: "Bulk PDF", chip_size: printSize, bulk_count: bulkCount, spin: config.spinDirection });
     const svg = document.querySelector("svg[viewBox='0 0 516 516']");
     if (!svg) return;
     setGeneratingBulk(true);
