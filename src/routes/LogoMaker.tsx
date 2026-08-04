@@ -16,6 +16,16 @@ import {
 import { cn } from "@/lib/utils";
 import { getPalette } from "@/lib/palette";
 
+declare global {
+  interface Window {
+    plausible?: (event: string, props?: Record<string, string | number>) => void;
+  }
+}
+
+const track = (event: string, props?: Record<string, string | number>) => {
+  window.plausible?.(event, props);
+};
+
 type SpinDirection = "right" | "left";
 
 interface LogoConfig {
@@ -374,6 +384,7 @@ export function LogoMaker() {
 
 
   const handleDownload = useCallback(() => {
+    track("Download", { format: "PNG" });
     const svg = document.querySelector("svg[viewBox='0 0 516 516']");
     if (!svg) return;
     const svgData = new XMLSerializer().serializeToString(svg);
@@ -400,6 +411,7 @@ export function LogoMaker() {
   }, []);
 
   const handleSvgDownload = useCallback(() => {
+    track("Download", { format: "SVG" });
     const svg = document.querySelector("svg[viewBox='0 0 516 516']");
     if (!svg) return;
     const svgData = new XMLSerializer().serializeToString(svg);
@@ -411,6 +423,7 @@ export function LogoMaker() {
   }, []);
 
   const handlePrintDownload = useCallback((type: string) => {
+    track("Download", { format: "Print", chip_size: type });
     const sizeMap: Record<string, number> = { BX: 16, UX: 17, CX: 16 };
     const sizeMm = sizeMap[type] || 17;
     const svg = document.querySelector("svg[viewBox='0 0 516 516']");
@@ -444,6 +457,7 @@ export function LogoMaker() {
   }, []);
 
   const handleBulkPdf = useCallback(async () => {
+    track("Download", { format: "Bulk PDF", chip_size: printSize, bulk_count: bulkCount });
     const svg = document.querySelector("svg[viewBox='0 0 516 516']");
     if (!svg) return;
     setGeneratingBulk(true);
@@ -675,7 +689,12 @@ export function LogoMaker() {
             </button>
             {/* Auto-detect theme from image */}
             <button
-              onClick={() => config.centerImage && applyAutoTheme(config.centerImage)}
+              onClick={() => {
+                if (config.centerImage) {
+                  track("Auto Detect");
+                  applyAutoTheme(config.centerImage);
+                }
+              }}
               disabled={autoDetecting}
               className="w-full flex items-center justify-center gap-2 rounded-lg bg-purple-600/20 border border-purple-800 hover:bg-purple-600/30 disabled:opacity-50 py-2 text-xs font-medium text-purple-300 transition-all"
             >
@@ -691,13 +710,19 @@ export function LogoMaker() {
             <div className="text-sm font-medium text-neutral-300">Colors</div>
             <div className="flex gap-1 rounded-lg bg-neutral-900 p-0.5">
               <button
-                onClick={() => setActiveColorTab("presets")}
+                onClick={() => {
+                  setActiveColorTab("presets");
+                  track("Customize", { mode: "preset" });
+                }}
                 className={cn("rounded-md px-3 py-1 text-xs font-medium transition-all", activeColorTab === "presets" ? "bg-neutral-700 text-white" : "text-neutral-500")}
               >
                 Presets
               </button>
               <button
-                onClick={() => setActiveColorTab("custom")}
+                onClick={() => {
+                  setActiveColorTab("custom");
+                  track("Customize", { mode: "custom" });
+                }}
                 className={cn("rounded-md px-3 py-1 text-xs font-medium transition-all", activeColorTab === "custom" ? "bg-neutral-700 text-white" : "text-neutral-500")}
               >
                 Custom
