@@ -182,6 +182,10 @@ function BeybladeLogo({
             width={imgSize}
             height={imgSize}
             preserveAspectRatio="xMidYMid meet"
+            style={{ cursor: "grab" }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
           />
         </g>
       )}
