@@ -264,7 +264,7 @@ function BeybladeLogo({
 
 
       {/* === IMAGE (NOT rotated, clipped to outer circle) === */}
-      {centerImage && (
+      {centerImage && imageLayer === "top" && (
         <image
           href={centerImage}
           x={imgX}
