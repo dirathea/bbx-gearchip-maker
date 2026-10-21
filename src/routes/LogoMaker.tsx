@@ -121,19 +121,14 @@ function BeybladeLogo({
     if (!dragRef.current || !onImageDrag) return;
     e.preventDefault();
     const pt = getSvgPoint(e.clientX, e.clientY);
-    let dx = pt.x - lastPos.current.x;
-    let dy = pt.y - lastPos.current.y;
-    // In inside-ring mode the image lives inside the rotated group (counter-rotated
-    // to stay upright), so drag deltas must be mapped into that rotated frame.
-    if (imageLayer === "ring" && logoRotation) {
-      const a = (-logoRotation * Math.PI) / 180;
-      const rx = dx * Math.cos(a) - dy * Math.sin(a);
-      const ry = dx * Math.sin(a) + dy * Math.cos(a);
-      dx = rx; dy = ry;
-    }
+    const dx = pt.x - lastPos.current.x;
+    const dy = pt.y - lastPos.current.y;
+    // Note: in inside-ring mode the image carries rotate(-R) inside the parent's
+    // rotate(R) — both about the same center — so they cancel and the image's
+    // x/y are effectively in screen/root coordinates. No delta compensation needed.
     lastPos.current = pt;
     onImageDrag(dx, dy);
-  }, [getSvgPoint, onImageDrag, imageLayer, logoRotation]);
+  }, [getSvgPoint, onImageDrag]);
 
   const handlePointerUp = useCallback((e: React.PointerEvent) => {
     dragRef.current = false;
