@@ -161,7 +161,18 @@ function BeybladeLogo({
       {/* Background */}
       <rect width={VIEW} height={VIEW} rx={VIEW / 2} fill={bgColor} />
 
-      {/* === IMAGE INSIDE RING (under frame, clipped to disc) === */}
+      {/* === FRAME (ring, disc, sweep - always same position) === */}
+      {/* Disc fill + sweep (clipped) */}
+      <g clipPath="url(#logoClip)">
+        <circle cx={CENTER} cy={CENTER} r={DISC_R} fill={discColor} />
+        <path
+          d="M248,.19v62.06c-22.92,1.14-45.18,6.23-66.29,15.16-23.34,9.87-44.3,24-62.3,42s-32.13,38.96-42,62.3c-10.23,24.17-15.41,49.84-15.41,76.29,0,31.11,7.39,61.75,21.45,89.23l-45.09,26.03-8.66,5.01c.82,1.57,1.66,3.12,2.52,4.67.76,1.37,1.53,2.73,2.31,4.08l.04-.02,62.33-35.99c-1.67-2.88-3.26-5.81-4.77-8.79-12.88-25.28-20.13-53.91-20.13-84.22,0-99.36,77.93-180.54,176-185.73,3.31-.18,6.64-.27,10-.27V0c-3.35,0-6.68.06-10,.19Z"
+          fill={sweepColor}
+          opacity="0.85"
+        />
+      </g>
+
+      {/* === IMAGE INSIDE RING (above disc, under ring frame/text) === */}
       {centerImage && imageLayer === "ring" && (
         <g clipPath="url(#logoClip)">
           <image
@@ -174,17 +185,6 @@ function BeybladeLogo({
           />
         </g>
       )}
-
-      {/* === FRAME (ring, disc, sweep - always same position) === */}
-      {/* Disc fill + sweep (clipped) */}
-      <g clipPath="url(#logoClip)">
-        <circle cx={CENTER} cy={CENTER} r={DISC_R} fill={discColor} />
-        <path
-          d="M248,.19v62.06c-22.92,1.14-45.18,6.23-66.29,15.16-23.34,9.87-44.3,24-62.3,42s-32.13,38.96-42,62.3c-10.23,24.17-15.41,49.84-15.41,76.29,0,31.11,7.39,61.75,21.45,89.23l-45.09,26.03-8.66,5.01c.82,1.57,1.66,3.12,2.52,4.67.76,1.37,1.53,2.73,2.31,4.08l.04-.02,62.33-35.99c-1.67-2.88-3.26-5.81-4.77-8.79-12.88-25.28-20.13-53.91-20.13-84.22,0-99.36,77.93-180.54,176-185.73,3.31-.18,6.64-.27,10-.27V0c-3.35,0-6.68.06-10,.19Z"
-          fill={sweepColor}
-          opacity="0.85"
-        />
-      </g>
 
       {/* Outer black ring (~270° arc) */}
       <path
