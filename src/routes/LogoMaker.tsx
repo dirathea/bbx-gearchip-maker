@@ -10,6 +10,7 @@ import {
   Move,
   Wand2,
   FileText,
+  Layers,
   Plus,
   Minus,
 } from "lucide-react";
@@ -40,6 +41,7 @@ interface LogoConfig {
   imageScale: number;
   imageX: number;
   imageY: number;
+  imageLayer: "top" | "ring";
 }
 
 const PRESETS = [
@@ -65,6 +67,7 @@ const DEFAULT_CONFIG: LogoConfig = {
   imageScale: 1,
   imageX: 0,
   imageY: 0,
+  imageLayer: "top",
 };
 
 // SVG viewBox dimensions
@@ -84,7 +87,7 @@ function BeybladeLogo({
 }) {
   const {
     discColor, ringAccentColor, sweepColor, textColor, bgColor,
-    spinDirection, logoRotation, centerImage, imageScale, imageX, imageY,
+    spinDirection, logoRotation, centerImage, imageScale, imageX, imageY, imageLayer,
   } = config;
   const flip = spinDirection === "left";
 
@@ -157,6 +160,20 @@ function BeybladeLogo({
 
       {/* Background */}
       <rect width={VIEW} height={VIEW} rx={VIEW / 2} fill={bgColor} />
+
+      {/* === IMAGE INSIDE RING (under frame, clipped to disc) === */}
+      {centerImage && imageLayer === "ring" && (
+        <g clipPath="url(#logoClip)">
+          <image
+            href={centerImage}
+            x={imgX}
+            y={imgY}
+            width={imgSize}
+            height={imgSize}
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </g>
+      )}
 
       {/* === FRAME (ring, disc, sweep - always same position) === */}
       {/* Disc fill + sweep (clipped) */}
@@ -661,6 +678,34 @@ export function LogoMaker() {
           <div className="space-y-4 rounded-xl bg-neutral-900/50 p-4 border border-neutral-800">
             <div className="flex items-center gap-2 text-xs text-neutral-500">
               <Move size={14} /> Drag image on logo to reposition
+            </div>
+            {/* Image layer toggle */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-neutral-400 flex items-center gap-2">
+                  <Layers size={16} /> Image Layer
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => update("imageLayer", "top")}
+                  className={cn(
+                    "rounded-lg py-2 text-xs font-medium transition-all border",
+                    config.imageLayer === "top" ? "bg-red-600 text-white border-red-500" : "bg-neutral-900 text-neutral-400 border-neutral-800"
+                  )}
+                >
+                  On Top (sticker)
+                </button>
+                <button
+                  onClick={() => update("imageLayer", "ring")}
+                  className={cn(
+                    "rounded-lg py-2 text-xs font-medium transition-all border",
+                    config.imageLayer === "ring" ? "bg-blue-600 text-white border-blue-500" : "bg-neutral-900 text-neutral-400 border-neutral-800"
+                  )}
+                >
+                  Inside Ring (chip)
+                </button>
+              </div>
             </div>
             {/* Scale slider */}
             <div>
